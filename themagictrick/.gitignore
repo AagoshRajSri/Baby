@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+.venv/
+__pycache__/
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# Next.js generated files
+.next/
+out/
+next-env.d.ts
+
+# Python
+*.pyc
