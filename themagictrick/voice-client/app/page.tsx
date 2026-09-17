@@ -5,6 +5,7 @@ import {
   LiveKitRoom,
   RoomAudioRenderer,
   useLocalParticipant,
+  useRemoteParticipants,
 } from "@livekit/components-react";
 
 export default function Page() {
@@ -67,22 +68,64 @@ export default function Page() {
 }
 
 function AudioController() {
-  const { isMicrophoneEnabled } = useLocalParticipant();
+  const { localParticipant, isMicrophoneEnabled } = useLocalParticipant();
+  const remoteParticipants = useRemoteParticipants();
+  const agent = remoteParticipants[0];
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black text-white">
-      <div className="flex flex-col items-center gap-6">
-        <div
-          className={`h-24 w-24 rounded-full transition ${
-            isMicrophoneEnabled ? "animate-pulse bg-emerald-500" : "bg-red-500"
-          }`}
-        />
+      <div className="flex flex-col md:flex-row items-center gap-16">
+        {/* Local User */}
+        <div className="flex flex-col items-center gap-4">
+          <div
+            className={`flex h-32 w-32 items-center justify-center rounded-full transition-all duration-300 ${
+              isMicrophoneEnabled ? "bg-emerald-900/30" : "bg-red-900/30"
+            } ${localParticipant?.isSpeaking ? "scale-110 animate-pulse ring-4 ring-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.5)]" : ""}`}
+          >
+            <div
+              className={`h-24 w-24 rounded-full transition-all duration-300 ${
+                isMicrophoneEnabled ? "bg-emerald-500" : "bg-red-500"
+              }`}
+            />
+          </div>
 
-        <h1 className="text-2xl font-bold">the magic Link</h1>
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight">You</h2>
+            <p className="text-gray-400 mt-2 font-medium">
+              {localParticipant?.isSpeaking
+                ? "Starts speaking..."
+                : isMicrophoneEnabled
+                ? "Stopped speaking"
+                : "Muted"}
+            </p>
+          </div>
+        </div>
 
-        <p className="text-gray-400">
-          Mic: {isMicrophoneEnabled ? "Active & Streaming" : "Muted"}
-        </p>
+        {/* Remote Agent */}
+        <div className="flex flex-col items-center gap-4">
+          <div
+            className={`flex h-32 w-32 items-center justify-center rounded-full transition-all duration-300 ${
+              agent ? "bg-blue-900/30" : "bg-gray-800/50"
+            } ${agent?.isSpeaking ? "scale-110 animate-pulse ring-4 ring-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.5)]" : ""}`}
+          >
+            <div
+              className={`h-24 w-24 rounded-full transition-all duration-300 ${
+                agent ? "bg-blue-500" : "bg-gray-700"
+              }`}
+            />
+          </div>
+
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight">Agent</h2>
+            <p className="text-gray-400 mt-2 font-medium">
+              {agent?.isSpeaking
+                ? "Starts speaking..."
+                : agent
+                ? "Stopped speaking"
+                : "Not connected"}
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   );
